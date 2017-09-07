@@ -7,6 +7,8 @@ import tree.*;
 
 public class MainProgram {
 	
+	public static ArrayList<Move> pastMoves= new ArrayList<Move>();
+	
 	public static void main(String[] args) {
 		Position board;
 		Piece[][] startingMatrix;
@@ -63,29 +65,39 @@ public class MainProgram {
 		
 		Scanner scanner= new Scanner(System.in);
 		String userMove;
+		
 		//TODO: implement castling, then promotion, then en passant
 		do {
 			outputMove(board);
 			System.out.println("Enter your move: ");
 			userMove= scanner.nextLine();
 			Move move= Move.stringToMove(board, userMove);
+			pastMoves.add(move); //add to pastMoves
+
 			board.makeMove(move);
-			System.out.println(board);
+			System.out.println(pastMoves);
 		} while (userMove!="exit");
 	}
 	
 	public static Move outputMove(Position board) {
 		MoveNode rootNode= new MoveNode(null);
+		System.out.println();
 		MoveTree moveTree= new MoveTree(rootNode, board);
 		moveTree.createChildren(rootNode); //level 1
 		moveTree.createChildlessNodes(board); //level 2
 		moveTree.createChildlessNodes(board); //level 3
+		moveTree.createChildlessNodes(board); //level 4
+//		moveTree.createChildlessNodes(board); //level 5
+//		moveTree.createChildlessNodes(board); //level 6
+
+
 		
 		moveTree.evaluate(rootNode);
 		board.makeMove(rootNode.bestOppMove);
 		System.out.println("Computer's move: " + rootNode.bestOppMove);
+		pastMoves.add(rootNode.bestOppMove); //add to pastMoves
 		System.out.println(board);
-		moveTree.printChildrenInfo(rootNode);
+		//moveTree.printChildrenInfo(rootNode);
 
 		return rootNode.bestOppMove;
 	}

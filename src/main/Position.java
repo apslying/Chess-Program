@@ -1,13 +1,14 @@
 package main;
 
-import java.awt.PageAttributes;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.PrimitiveIterator.OfDouble;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
 
 import pieces.*;
-public class Position {
+public class Position implements Comparator<Move> {
 	public Piece[][] matrix;
 	public boolean whiteToMove; 
 	
@@ -56,10 +57,12 @@ public class Position {
 		move.piece.rank=move.endrank;
 		move.piece.file=move.endfile;
 		
+		//HACK: careful of this.makeMove(moveRook); being recursive
 		if (move.piece.name== 'K' && move.beginrank== 0 && move.beginfile== 3 && move.endrank== 0 && move.endfile== 1){
 			//castling kingside white
 			Move moveRook = new Move(this.matrix[0][0], 0, 2);
 			this.makeMove(moveRook);
+			this.whiteToMove=!this.whiteToMove;
 		}
 		
 		if (move.piece.name== 'K' && move.beginrank== 7 && move.beginfile== 3 && move.endrank== 7 && move.endfile== 1){
@@ -67,8 +70,15 @@ public class Position {
 			//TODO: undo castling !!!!
 			Move moveRook = new Move(this.matrix[7][0], 7, 2);
 			this.makeMove(moveRook);
+			this.whiteToMove=!this.whiteToMove;
+			
 		}
 		//return this;
+		
+		//en passant
+		if (move.piece.name=='P' && move.beginrank==move.beginrank) {
+			
+		}
 	}
 	
 	//TODO: piece that was captured but never moved will disappear (ex. 4 move mate, f7 disappears)
@@ -79,6 +89,21 @@ public class Position {
 		move.piece.rank=move.beginrank;
 		move.piece.file=move.beginfile;
 		//return this;
+		
+		//HACK!!!!! 02 to 00
+		if (move.piece.name== 'K' && move.beginrank== 0 && move.beginfile== 3 && move.endrank== 0 && move.endfile== 1){
+			//castling kingside white
+			Move moveRook = new Move(this.matrix[0][2], 0, 0);
+			this.makeMove(moveRook);
+			this.whiteToMove=!this.whiteToMove;
+		}
+		
+		if (move.piece.name== 'K' && move.beginrank== 7 && move.beginfile== 3 && move.endrank== 7 && move.endfile== 1){
+			//castling kingside black
+			Move moveRook = new Move(this.matrix[7][2], 7, 0);
+			this.makeMove(moveRook);
+			this.whiteToMove=!this.whiteToMove;
+		}
 	}
 	
 	public int countMaterial(){
@@ -139,6 +164,10 @@ public class Position {
 			return opponentMoves.size() - myMoves.size();
 	}
 	
+	public int evaluateSimple() {
+		return countMaterial() + countMobility();
+	}
+	
 	public Piece getPiece(int rank, int file) {
 		return this.matrix[rank][file];
 	}
@@ -188,6 +217,36 @@ public class Position {
 			}
 
 		}
+		return listOfMoves;
+	}
+	
+	public ArrayList<Move> addEvalToMoves(){
+		ArrayList<Move> listOfMoves= listAllMoves();
+		for (Move move : listOfMoves) {
+			this.makeMove(move);
+			move.simpleEval= this.evaluateSimple();
+			this.undoMove(move);
+		}
+		return listOfMoves;
+	}
+	
+	public ArrayList<Move> sortMoves() {
+		ArrayList<Move> listOfMoves= addEvalToMoves();
+		listOfMoves.sort(new Comparator<Move>() {
+
+			@Override
+			public int compare(Move m1, Move m2) {
+				if (m1.simpleEval < m2.simpleEval) {
+					return -1;
+				}
+				else if (m1.simpleEval > m2.simpleEval) {
+					return 1;
+				}
+				else {
+					return 0;
+				}
+			}
+		});
 		return listOfMoves;
 	}
 	
@@ -260,4 +319,13 @@ public class Position {
 		return new Position(matrix,true);
 		
 	}
+
+	//already implemented 
+	@Override
+	public int compare(Move o1, Move o2) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+
 }

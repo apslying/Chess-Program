@@ -3,10 +3,10 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import java.util.ArrayList;
 import main.*;
 
-public class MoveNode extends DefaultMutableTreeNode {
-	public Move thisMove;
-	public Move bestOppMove;
-	public int evaluation;
+public class MoveNode extends DefaultMutableTreeNode { //80 bytes
+	public Move thisMove; //38 bytes
+	public Move bestOppMove; //38 bytes
+	public int evaluation; //4 bytes
 	
 	public MoveNode(Move thisMove) {
 		super();

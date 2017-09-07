@@ -7,6 +7,7 @@ public class King extends Piece{
 		super(type, rank, file, isWhite);
 	}
 	
+	
 	public static ArrayList<Move> possibleMoves(Position position, int rank, int file){
 		ArrayList<Move> kingMoves= new ArrayList<Move>();
 		King king= (King)(position.matrix)[rank][file]; 
@@ -29,18 +30,44 @@ public class King extends Piece{
 			}
 		}
 		
-		if (king.rank == 0 && king.file == 3 && position.matrix[0][0].name == 'R' && position.matrix[0][1] == null && position.matrix[0][2] == null) {
+		if (canCastleKingside(position) == true) {
 			Move move= new Move(king, 0, 1);
 			kingMoves.add(move);
 		}
 		
-		else if (king.rank == 7 && king.file == 3 && position.matrix[7][0].name == 'R' && position.matrix[7][1] == null && position.matrix[7][2] == null) {
-			System.out.println("in!");
-			Move move= new Move(king, 7, 1);
-			kingMoves.add(move);
+		return kingMoves;
+		
+//		if (king.rank == 0 && king.file == 3 && position.matrix[0][0].name == 'R' && position.matrix[0][1] == null && position.matrix[0][2] == null) {
+//			Move move= new Move(king, 0, 1);
+//			kingMoves.add(move);
+//		}
+//		
+//		else if (king.rank == 7 && king.file == 3 && position.matrix[7][0].name == 'R' && position.matrix[7][1] == null && position.matrix[7][2] == null) {
+//			System.out.println("in!");
+//			Move move= new Move(king, 7, 1);
+//			kingMoves.add(move);
+//		}
+		
+	}
+	
+	public static boolean canCastleKingside(Position position) {
+		if (position.whiteToMove == true) {
+			if (position.matrix[0][3].name == 'K' && position.matrix[0][0].name == 'R' && position.matrix[0][1] == null && position.matrix[0][2] == null) {
+				return true;
+			}
+			else {
+				return false;
+			}
 		}
 		
-		return kingMoves;
+		else {
+			if (position.matrix[7][3].name == 'K' && position.matrix[7][0].name == 'R' && position.matrix[7][1] == null && position.matrix[7][2] == null) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
 	}
 
 }

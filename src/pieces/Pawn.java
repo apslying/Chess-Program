@@ -11,77 +11,65 @@ public class Pawn extends Piece{
 	public static ArrayList<Move> possibleMoves(Position position, int rank, int file){
 		ArrayList<Move> pawnMoves= new ArrayList<Move>();
 		Pawn pawn= (Pawn)(position.matrix)[rank][file]; 
+		int change;
+		int initialRow;
+		int enPassantRow;
 		if(position.whiteToMove==true){
-			if(position.matrix[rank+1][file]==null){
-				Move move= new Move(pawn, rank+1, file);
+			change=1;
+			initialRow=1;
+			enPassantRow=4;
+		}
+		else {
+			change=-1;
+			initialRow=6;
+			enPassantRow=3;
+		}
+		
+		//normal move
+		if(position.matrix[rank+change][file]==null){
+			Move move= new Move(pawn, rank+change, file);
+			pawnMoves.add(move);
+		}
+		
+		//capture
+		try {
+			if(position.matrix[rank+change][file+change]!=null && pawn.isWhite!=position.matrix[rank+change][file+change].isWhite){
+				Move move= new Move(pawn, rank+change, file+change);
+				pawnMoves.add(move);
+			}
+		} catch (ArrayIndexOutOfBoundsException e) {
+		}
+		
+		//capture other direction
+		try {
+			if(position.matrix[rank+change][file-change]!=null && pawn.isWhite!=position.matrix[rank+change][file-change].isWhite){
+				Move move= new Move(pawn, rank+change, file-change);
+				pawnMoves.add(move);
+			}
+		} catch (ArrayIndexOutOfBoundsException e) {
+		}
+		
+		//move two squares
+		if(rank==initialRow){
+			if(position.matrix[rank+(2*change)][file]==null && position.matrix[rank+(2*change)][file]==null){
+				Move move= new Move(pawn, rank+(2*change), file);
+				pawnMoves.add(move);
+			}
+		}
+		
+		//en passant
+		try {
+			Piece piece= MainProgram.pastMoves.get(-1).piece;
+			if (rank==enPassantRow && piece.name=='P' && piece.rank==enPassantRow && piece.file==file-1) {
+				Move move= new Move(pawn, rank, file-1);
 				pawnMoves.add(move);
 			}
 			
-			try {
-				//capture
-				if(position.matrix[rank+1][file+1]!=null && pawn.isWhite!=position.matrix[rank+1][file+1].isWhite){
-					Move move= new Move(pawn, rank+1, file+1);
-					pawnMoves.add(move);
-				}
-			} catch (ArrayIndexOutOfBoundsException e) {
-				// TODO: handle exception
-			}
 			
-			try {
-				//capture
-				if(position.matrix[rank+1][file-1]!=null && pawn.isWhite!=position.matrix[rank+1][file-1].isWhite){
-					Move move= new Move(pawn, rank+1, file-1);
-					pawnMoves.add(move);
-				}
-			} catch (ArrayIndexOutOfBoundsException e) {
-				// TODO: handle exception
-			}
-			
-			if(rank==1){
-				if(position.matrix[rank+2][file]==null && position.matrix[rank+1][file]==null){
-					Move aMove= new Move(pawn, rank+2, file);
-					pawnMoves.add(aMove);
-				}
-			}
-
+		} catch (ArrayIndexOutOfBoundsException e) {
+			// TODO: handle exception
 		}
-		
-		else if(position.whiteToMove==false){
-			if(position.matrix[rank-1][file]==null){
-				Move move= new Move(pawn, rank-1, file);
-				pawnMoves.add(move);
-			}
-			
-			try {
-				//capture
-				if(position.matrix[rank-1][file+1]!=null && pawn.isWhite!=position.matrix[rank-1][file+1].isWhite){
-					Move move= new Move(pawn, rank-1, file+1);
-					pawnMoves.add(move);
-				}
-			} catch (ArrayIndexOutOfBoundsException e) {
-				// TODO: handle exception
-			}
-			
-			try {
-				//capture
-				if(position.matrix[rank-1][file-1]!=null && pawn.isWhite!=position.matrix[rank-1][file-1].isWhite){
-					Move move= new Move(pawn, rank-1, file-1);
-					pawnMoves.add(move);
-				}
-			} catch (ArrayIndexOutOfBoundsException e) {
-				// TODO: handle exception
-			}
-			
-			if(rank==6){
-				if(position.matrix[rank-2][file]==null && position.matrix[rank-1][file]==null){
-					Move aMove= new Move(pawn, rank-2, file);
-					pawnMoves.add(aMove);
-				}
-			}
-
-		}
-		
-		
 		return pawnMoves;
+
 	}
 }

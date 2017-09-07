@@ -9,6 +9,7 @@ import main.*;
 public class MoveTree extends DefaultTreeModel{
 	
 	public Position position;
+	public int depth= 4;
 
 	public MoveTree(TreeNode root, Position position) {
 		super(root);

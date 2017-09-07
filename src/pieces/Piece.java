@@ -1,18 +1,18 @@
 package pieces;
 public class Piece {
-	public char name;
-	public int rank;
-	public int file;
-	public boolean isWhite;
+	public char name; //2
+	public int rank; //4
+	public int file; //4
+	public boolean isWhite; // 1 bit
 	
-	public Piece(char type, int rank, int file, boolean isWhite) {
-		this.name = type;
+	public Piece(char name, int rank, int file, boolean isWhite) {
+		this.name = name;
 		this.rank = rank;
 		this.file = file;
 		this.isWhite = isWhite;
 	}
 	
-	public char getType() {
+	public char getName() {
 		return name;
 	}
 

@@ -1,12 +1,13 @@
 package main;
 import pieces.*;
 public class Move {
-	public Piece piece;
-	public Piece capturedPiece;
-	public int beginrank;
-	public int beginfile;
-	public int endrank;
-	public int endfile;
+	public Piece piece; //11
+	public Piece capturedPiece; //11
+	public int beginrank; //4
+	public int beginfile; //4
+	public int endrank; //4
+	public int endfile; //4
+	public int simpleEval; //evaluation of the position after making this move
 		
 	public Move(Piece piece, int beginrank, int beginfile, int endrank, int endfile) {
 		this.piece = piece;
